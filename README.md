@@ -10,7 +10,8 @@ http://139.155.29.205/
 腾讯新闻API
 
 ## 技术栈
-vue 
+```
+vue
 vue cli
 vue-router
 vue-swiper-component
@@ -20,7 +21,7 @@ chinese-to-pinyin
 echarts
 sass
 sass-loader
-
+```
 ## Project setup
 ```
 npm install
