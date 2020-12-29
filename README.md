@@ -1,4 +1,4 @@
-# yiqingvue2.0
+# The latest global epidemic information 3.0
 
 ## Project setup
 ```
