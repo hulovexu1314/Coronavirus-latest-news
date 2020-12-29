@@ -5,7 +5,6 @@ import router from './router/index.js'
 import'./assets/reset.css'
 import echarts from 'echarts'
 
-
 Vue.prototype.$echarts = echarts
 
 Vue.config.productionTip = false

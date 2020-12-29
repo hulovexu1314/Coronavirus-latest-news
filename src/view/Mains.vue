@@ -509,7 +509,6 @@
       </div>
     </SlimPopup>
     <div v-if="centerShow" class="close-btn" @click="centerShow = false"></div>
-    <audio src="../assets/bayin.mp3" controls="controls" hidden="hidden" autoplay="autoplay"  loop="loop" ref=mp3s></audio>
   </div>
 </template>
 
@@ -528,6 +527,7 @@ import {
 } from "../api/request.js";
 import echarts from "echarts";
 import "../../node_modules/echarts/map/js/china.js"; // 引入中国地图数据
+
 export default {
   name: "Mains",
   components: {
@@ -539,6 +539,7 @@ export default {
   },
   data() {
     return {
+      hooktips:null,
       len:0,
       centerShow:false,
       tabType: 1,
@@ -1017,7 +1018,6 @@ export default {
     }
   },
   mounted() {
-    this.$refs.mp3s.volume = 0.1
     this.chinaConfigure();
     this.initTubiao2();
     this.initTubiao3();
@@ -1289,7 +1289,10 @@ export default {
       }
     },
     jumpToDetail(e, name) {
-      e.stopPropagation();
+      if(e.stopPropagation){
+        e.stopPropagation();
+      }
+      
       if (name === "香港" || name === "澳门" || name === "台湾") {
         console.log("没有相关详情数据");
       } else {
@@ -1387,11 +1390,14 @@ export default {
     //初始化图表1
     chinaConfigure() {
       this.myChart = echarts.init(this.$refs.myEchart);
+      var _this = this
       this.myChart.setOption({
         tooltip: {
+          enterable:true,
           triggerOn: "click",
           formatter: function (e) {
-            let htmls = `<div style="width:85px;height:50px;text-align:center;font-size:10px"><div>${e.name}</div><div style="text-align:center;">现有确诊:${e.value}</div></div>`;
+            _this.hooktips = e.name
+            let htmls = `<div style="width:85px;height:55px;text-align:center;font-size:10px"><div>${e.name}</div><div style="text-align:center;">现有确诊:${e.value}</div><buttom id="btn-hander">查看详情</buttom></div>`;
             return htmls;
           },
         },
@@ -2096,11 +2102,13 @@ export default {
     changBtnHandler(e) {
       let id = parseInt(e.target.dataset.id);
       this.btntype = id;
+      var _this = this
       if (id === 1) {
         this.myChart.setOption({
           tooltip: {
             formatter: function (e) {
-              let htmls = `<div style="width:85px;height:50px;text-align:center;font-size:10px"><div>${e.name}</div><div style="text-align:center;">现有确诊:${e.value}</div></div>`;
+              _this.hooktips = e.name
+              let htmls = `<div style="width:85px;height:55px;text-align:center;font-size:10px"><div>${e.name}</div><div style="text-align:center;">现有确诊:${e.value}</div><buttom id="btn-hander">查看详情</buttom></div>`;
               return htmls;
             },
           },
@@ -2114,7 +2122,8 @@ export default {
         this.myChart.setOption({
           tooltip: {
             formatter: function (e) {
-              let htmls = `<div style="width:85px;height:50px;text-align:center;font-size:10px"><div>${e.name}</div><div style="text-align:center;">累计确诊:${e.value}</div></div>`;
+              _this.hooktips = e.name
+              let htmls = `<div style="width:85px;height:55px;text-align:center;font-size:10px"><div>${e.name}</div><div style="text-align:center;">累计确诊:${e.value}</div><buttom id="btn-hander">查看详情</buttom></div>`;
               return htmls;
             },
           },
@@ -2183,6 +2192,19 @@ export default {
       return arrOuter;
     },
   },
+  watch:{
+    hooktips:function(name){
+        document.querySelector("#btn-hander").addEventListener("click", () => {
+          console.log('click')
+        if (name === "香港" || name === "澳门" || name === "台湾") {
+        console.log("没有相关详情数据");
+        } else {
+          console.log(name);
+          this.$router.push({ path: "/detail",query:{city: name}});
+        }
+      })
+    }
+  },
   filters: {
     filterNumber: function (value) {
       if (value > 0) {
@@ -2205,10 +2227,6 @@ export default {
         return `${hous}小时${min}分钟`;
       }
     },
-  },
-  destroyed(){
-    console.log('xiaohuile')
-    window.addEventListener("scroll", this.debounce);
   }
 };
 </script>

@@ -5,13 +5,9 @@
 </template>
 
 <script>
-// import Mains from './view/Mains.vue'
 
 export default {
   name: "App",
-  // components:{
-  //   Mains
-  // }
 };
 </script>
 
