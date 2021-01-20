@@ -136,7 +136,7 @@
         <div class="hospitalBox" v-if="SwiperArr.childrens.length">
           <Swiper
             :autoPlay="false"
-            :showIndicator="false"
+            :showIndicator="true"
             ref="swiper2"
           >
             <Slide v-for="(item,i) in SwiperArr.childrens" :key="i" class="swiperbox">
@@ -2085,6 +2085,9 @@ export default {
     .swiperbox{
     width: 90.133vw;
     position: relative;
+    .wh_indicator{
+      bottom:0
+    }
       .items{
         width: 25%;
         overflow: hidden;
@@ -2141,4 +2144,7 @@ export default {
     }
   }
 }
+.wh_indicator{
+      bottom:0
+    }
 </style>

@@ -19,42 +19,6 @@
     </div>
     <div class="concent" ref="zj">
       <div v-if="tabType === 1" :key="1" ref="fj">
-        <div class="chinaNow">
-          <div>
-            <div class="h2">
-              <span>近期本土疫情病例</span>
-              <em>(共{{ state.totalConfirm }}例)</em>
-              <span class="fxdq" @click="centerShow = true"></span>
-            </div>
-            <table>
-              <thead>
-                <tr>
-                  <td>省份</td>
-                  <td>地区</td>
-                  <td>现有确诊</td>
-                  <td>新增</td>
-                  <td>地区风险</td>
-                </tr>
-              </thead>
-              <tbody>
-                <tr
-                  v-for="(item, i) in state.ChinaCityNow"
-                  :key="i"
-                  @click="jumpToDetail($event, item.province)"
-                  style="z-index:99"
-                >
-                  <th>{{ item.province }}</th>
-                  <td>{{ item.city }}</td>
-                  <td>{{ item.nowConfirm }}</td>
-                  <td :class="[{ red: item.confirmAdd !== 0 }]">
-                    {{ item.confirmAdd | filterNumber }}
-                  </td>
-                  <td>{{ item.grade }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
         <div class="timer" v-if="state.ChinaCityAll.length !== 0">
           <div class="timeNum">
             <em>统计截至：</em>
@@ -68,6 +32,15 @@
           </div>
         </div>
         <div class="recentNumber" v-if="state.ChinaCityAll.length !== 0">
+          <div class="table heal">
+            <div class="add">
+              较昨日<span>{{
+                state.ChinaCityAll.chinaAdd.localConfirm | filterNumber
+              }}</span>
+            </div>
+            <div class="number">{{ state.ChinaCityAll.chinaTotal.localConfirm}}</div>
+            <div class="text">本土累计确诊</div>
+          </div>
           <div class="table nowConfirm">
             <div class="add">
               较昨日<span>{{
@@ -78,6 +51,17 @@
               {{ state.ChinaCityAll.chinaTotal.nowConfirm }}
             </div>
             <div class="text">现有确诊</div>
+          </div>
+          <div class="table confirm">
+            <div class="add">
+              较昨日<span>{{
+                state.ChinaCityAll.chinaAdd.confirm | filterNumber
+              }}</span>
+            </div>
+            <div class="number">
+              {{ state.ChinaCityAll.chinaTotal.confirm }}
+            </div>
+            <div class="text">累计确诊</div>
           </div>
           <div class="table nowSevere">
             <div class="add">
@@ -101,26 +85,6 @@
             </div>
             <div class="text">境外输入</div>
           </div>
-          <div class="table confirm">
-            <div class="add">
-              较昨日<span>{{
-                state.ChinaCityAll.chinaAdd.confirm | filterNumber
-              }}</span>
-            </div>
-            <div class="number">
-              {{ state.ChinaCityAll.chinaTotal.confirm }}
-            </div>
-            <div class="text">累计确诊</div>
-          </div>
-          <div class="table heal">
-            <div class="add">
-              较昨日<span>{{
-                state.ChinaCityAll.chinaAdd.heal | filterNumber
-              }}</span>
-            </div>
-            <div class="number">{{ state.ChinaCityAll.chinaTotal.heal }}</div>
-            <div class="text">累计治愈</div>
-          </div>
           <div class="table dead">
             <div class="add">
               较昨日<span>{{
@@ -129,6 +93,45 @@
             </div>
             <div class="number">{{ state.ChinaCityAll.chinaTotal.dead }}</div>
             <div class="text">累计死亡</div>
+          </div>
+        </div>
+        <div class="chinaNow">
+          <div>
+            <div class="h2">
+              <span>近期31省区市本土病例</span>
+              <span class="fxdq" @click="centerShow = true"></span>
+            </div>
+            <table>
+              <thead>
+              <tr>
+                <td>省份</td>
+                <td>地区</td>
+                <td>现有确诊</td>
+                <td>新增</td>
+                <td>地区风险</td>
+              </tr>
+              </thead>
+              <tbody>
+              <tr
+                  v-for="(item, i) in state.ChinaCityNow"
+                  :key="i"
+                  @click="jumpToDetail($event, item.province)"
+                  :class="[{hidden: i > 8}]"
+                  ref="hiddenTable"
+              >
+                <th>{{ item.province }}</th>
+                <td>{{ item.city }}</td>
+                <td>{{ item.nowConfirm }}</td>
+                <td :class="[{ red: item.confirmAdd !== 0 }]">
+                  {{ item.confirmAdd | filterNumber }}
+                </td>
+                <td>{{ item.grade }}</td>
+              </tr>
+              </tbody>
+            </table>
+            <div v-if="state.ChinaCityNow.length > 8" class="exp-More" @click="expListHandler" ref="more">
+              <span>展开更多</span>
+            </div>
           </div>
         </div>
         <div class="echarts1">
@@ -498,8 +501,12 @@
             <span>全国疫情中高风险名单</span>
         </div>
         <div class="concents">
-          <p class="top">中风险地区 {{len}}个</p>
-          <p v-for="(item,index) in state.riskarea" :key="index">
+          <p class="top">高风险地区 {{hightLen}}个</p>
+          <p v-for="(item,index) in state.riskarea.high" :key="index">
+            {{item.area}}
+          </p>
+          <p class="top">中风险地区 {{midLen}}个</p>
+          <p v-for="(item) in state.riskarea.mid" :key="item.area">
             {{item.area}}
           </p>
         </div>
@@ -540,7 +547,8 @@ export default {
   data() {
     return {
       hooktips:null,
-      len:0,
+      hightLen:0,
+      midLen:0,
       centerShow:false,
       tabType: 1,
       btntype: 1,
@@ -557,7 +565,10 @@ export default {
         zeroNowConfirm: 0,
       },
       state: {
-        riskarea:[],
+        riskarea:{
+          high:[],
+          mid:[]
+        },
         ChinaCityNow: [],
         ChinaCityAll: [],
         totalConfirm: 0,
@@ -1010,9 +1021,20 @@ export default {
     });
     try{
       const result = await this.GetRiskareas()
-      this.len = result.data.data.length
-      // console.log(result.data.data)
-      this.state.riskarea = result.data.data
+      const res = result.data.data
+        res.forEach((item) => {
+          if(item.type === '2'){
+            this.state.riskarea.high.push(item)
+          }
+          if(item.type === '1'){
+            this.state.riskarea.mid.push(item)
+          }
+        })
+      this.hightLen = this.state.riskarea.high.length
+      this.midLen = this.state.riskarea.mid.length
+
+      console.log('gao',this.state.riskarea.high)
+      console.log('low',this.state.riskarea.mid)
     } catch(err){
       console.log('error:',err)
     }
@@ -1031,6 +1053,14 @@ export default {
     window.addEventListener("scroll", this.debounce(this.watchScroll, 15));
   },
   methods: {
+    expListHandler(){
+      this.$refs.hiddenTable.forEach((item,index) => {
+        if(index > 8) {
+          item.classList.remove("hidden");
+        }
+      })
+      this.$refs.more.classList.add('hidden')
+    },
     GetRiskareas(){
       return new Promise((resolve,reject) => {
         getRiskarea().then((res) => {
@@ -2270,6 +2300,35 @@ export default {
   z-index: 99;
   .chinaNow {
     z-index: 101;
+    margin: 2vw 0;
+    .hidden{
+      display: none;
+    }
+    .exp-More{
+      text-align: center;
+      span{
+        display: inline-block;
+        padding: 1.6vw 4vw 1.6vw 0;
+        position: relative;
+        line-height: normal;
+        font-size: 3.2vw;
+        &::before{
+          content: ".";
+          font-size: 0;
+          line-height: 0;
+          display: block;
+          position: absolute;
+          width: 2.4vw;
+          height: 1.6vw;
+          background: url(https://mat1.gtimg.com/news/feiyanarea/icon_bt_more.png);
+          background-size: 100% 100%;
+          right: 0;
+          top: 50%;
+          -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+        }
+      }
+    }
     .h2 {
       position: relative;
       em {
@@ -2370,10 +2429,10 @@ export default {
     .nowImport {
       background-color: #fcf4f0;
       .number {
-        color: #f05926;
+        color: #4e8be6;
       }
       .add span {
-        color: #f05926;
+        color: #4e8be6;
       }
     }
     .confirm {
@@ -2388,10 +2447,10 @@ export default {
     .heal {
       background-color: #f1f8f4;
       .number {
-        color: #178b50;
+        color: #e57631;
       }
       .add span {
-        color: #178b50;
+        color: #e57631;
       }
     }
     .dead {
@@ -2903,6 +2962,6 @@ export default {
       }
     }
   }
-  
+
 }
 </style>

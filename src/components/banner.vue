@@ -25,7 +25,7 @@ export default {
 <style lang="scss" scoped>
 .head_box{
     width: 100vw;
-    background: url(../assets/bg.gif);
+    background: url(https://mat1.gtimg.com/news/feiyanarea/head_bg_new.png);
     background-size: 100% 100%;
     height: 40vw;
     position: relative;
