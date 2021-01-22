@@ -1,5 +1,27 @@
 import axios from 'axios'
 
+export const getLocationCity = () => {
+    return axios({
+        url: '/souhu/cityjson',
+        method: 'get'
+    })
+}
+
+export const getcityListData = () => {
+    return axios({
+        url: '/citylist/citylist?',//disease_foreign
+        method: 'get'
+    })
+}
+
+export const getCityInfoData = (id,id2) => {
+    let url = `/citylist/citypolicy?&city_id=${id},${id2}`
+    return axios({
+        url: url,
+        method: 'get'
+    })
+}
+
 export const getChinaData = () => {
     return axios({
         url: '/inews/getOnsInfo?name=disease_h5',//disease_foreign

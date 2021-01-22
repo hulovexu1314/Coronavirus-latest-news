@@ -19,6 +19,18 @@
     </div>
     <div class="concent" ref="zj">
       <div v-if="tabType === 1" :key="1" ref="fj">
+        <div class="enterIndex">
+          <div class="cxcx item" @click="jumpToInfo('sftravel')">
+            <span class="text">出行政策查询</span>
+          </div>
+          <p class="line"></p>
+          <div class="bhgj item" @click="jumpToInfo('yimiao')">
+            <span class="text">疫苗进度查询</span>
+          </div>
+          <!-- <div class="ymxx item">
+            <span class="text">全国春节出行政策查询</span>
+          </div> -->
+        </div>
         <div class="timer" v-if="state.ChinaCityAll.length !== 0">
           <div class="timeNum">
             <em>统计截至：</em>
@@ -1053,6 +1065,11 @@ export default {
     window.addEventListener("scroll", this.debounce(this.watchScroll, 15));
   },
   methods: {
+    jumpToInfo(value){
+      console.log(value);
+      let page = value === 'sftravel' ? '/sftravel' : 'yimiao'
+      this.$router.push({ path: page})
+    },
     expListHandler(){
       this.$refs.hiddenTable.forEach((item,index) => {
         if(index > 8) {
@@ -2298,6 +2315,44 @@ export default {
   height: 100%;
   overflow: hidden;
   z-index: 99;
+  .enterIndex{
+    margin: 2.133vw 5.333vw 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #eef4ff;
+    border-radius: 1.6vw;
+    padding: 0 2.667vw;
+    text-align: center;
+    .line{
+      height: 4.8vw;
+      width: 1px;
+      background-color: #d8e6ff;
+    }
+    .item{
+      line-height: normal;
+      font-size: 3.733vw;
+      padding: 3.467vw 0;
+      color: #222;
+      text-align: center;
+      position: relative;
+      margin:0 2vw;
+      &.cxcx{
+        .text{
+          background: url(https://mat1.gtimg.com/news/feiyanarea/icon_cx.png) no-repeat 0;
+          background-size: 5.6vw auto;
+          padding-left: 6.667vw;
+        }
+      }
+      &.bhgj{
+        .text{
+          background: url(https://mat1.gtimg.com/news/feiyanarea/icon_ymjiezhong.png) no-repeat 0;
+          background-size: 6.133vw auto;
+          padding-left: 6.667vw;
+        }
+      }
+    }
+  }
   .chinaNow {
     z-index: 101;
     margin: 2vw 0;

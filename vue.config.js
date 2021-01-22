@@ -30,7 +30,23 @@ module.exports = {
             pathRewrite:{
               '^/wecity':''
             }
-          }
+          },
+          '/citylist':{
+            target:'https://r.inews.qq.com/api/trackmap',
+            ws:true,
+            changeOrigin:true,
+            pathRewrite:{
+              '^/citylist':''
+            }
+          },
+          '/souhu':{
+            target:'http://pv.sohu.com',
+            ws:true,
+            changeOrigin:true,
+            pathRewrite:{
+              '^/souhu':''
+            }
+          },
         }
   },
   productionSourceMap: false,
